@@ -24,23 +24,15 @@ export const AlertInfo: React.FC<AlertCardProps> = ({ numero }) => {
           icon: '✅'
         };
       
-      case 2: // Température élevée
+      case 2: // Température anormale
         return {
-          message: 'Temp. élevée',
+          message: 'Temp. anormale',
           color: '#EF4444',
           bgColor: '#FEF2F2',
           icon: '🌡️'
         };
       
-      case 3: // Température basse
-        return {
-          message: 'Temp. basse',
-          color: '#3B82F6',
-          bgColor: '#EFF6FF',
-          icon: '❄️'
-        };
-      
-      case 4: // Non verrouillée
+      case 3: // Non verrouillée
         return {
           message: 'Non verrouillée',
           color: '#F59E0B',
@@ -48,15 +40,7 @@ export const AlertInfo: React.FC<AlertCardProps> = ({ numero }) => {
           icon: '🔓'
         };
       
-      case 5: // Non utilisée
-        return {
-          message: 'Non utilisée',
-          color: '#0EA5E9',
-          bgColor: '#F0F9FF',
-          icon: '⏸️'
-        };
-      
-      case 6: // Batterie faible
+      case 4: // Batterie faible
         return {
           message: 'Batterie faible',
           color: '#F59E0B',
@@ -64,15 +48,7 @@ export const AlertInfo: React.FC<AlertCardProps> = ({ numero }) => {
           icon: '🪫'
         };
       
-      case 7: // Déconnectée
-        return {
-          message: 'Déconnectée',
-          color: '#EF4444',
-          bgColor: '#FEE2E2',
-          icon: '📵'
-        };
-      
-      case 8: // Chute détectée
+      case 5: // URGENCE
         return {
           message: 'URGENCE',
           color: '#DC2626',
@@ -91,7 +67,7 @@ export const AlertInfo: React.FC<AlertCardProps> = ({ numero }) => {
   };
 
   const config = getAlertConfig(numero);
-  const isUrgent = numero === 8 || numero === 2 || numero === 7;
+  const isUrgent = numero === 5 || numero === 2;
 
   return (
     <View style={[
@@ -122,13 +98,10 @@ export const AlertCardCompact: React.FC<AlertCardProps> = ({ numero }) => {
   const getAlertText = (num: number): { message: string; color: string } => {
     const configs: { [key: number]: { message: string; color: string } } = {
       1: { message: 'Normal', color: '#10B981' },
-      2: { message: 'Température élevée', color: '#EF4444' },
-      3: { message: 'Température basse', color: '#3B82F6' },
-      4: { message: 'Non verrouillée', color: '#F59E0B' },
-      5: { message: 'Non utilisée', color: '#0EA5E9' },
-      6: { message: 'Batterie faible', color: '#F59E0B' },
-      7: { message: 'Déconnectée', color: '#EF4444' },
-      8: { message: 'URGENCE - Chute', color: '#DC2626' }
+      2: { message: 'Température anormale', color: '#EF4444' },
+      3: { message: 'Non verrouillée', color: '#F59E0B' },
+      4: { message: 'Batterie faible', color: '#F59E0B' },
+      5: { message: 'URGENCE', color: '#DC2626' }
     };
     
     return configs[num] || configs[1];
@@ -150,21 +123,18 @@ export const AlertCardCompact: React.FC<AlertCardProps> = ({ numero }) => {
 export const AlertCardWithLevel: React.FC<AlertCardProps> = ({ numero }) => {
   
   const getAlertLevel = (num: number): 'normal' | 'warning' | 'danger' => {
-    if (num === 1 || num === 5) return 'normal';
-    if (num === 3 || num === 4 || num === 6) return 'warning';
-    return 'danger';
+    if (num === 1) return 'normal';
+    if (num === 3 || num === 4) return 'warning';
+    return 'danger'; // 2 et 5
   };
 
   const getConfig = (num: number) => {
-    const configs: { [key: number]: any } = {
+    const configs: { [key: number]: { message: string; icon: string } } = {
       1: { message: 'Normal', icon: '✅' },
-      2: { message: 'Temperature élevée', icon: '🌡️' },
-      3: { message: 'Temperature basse', icon: '❄️' },
-      4: { message: 'Non verrouillée', icon: '🔓' },
-      5: { message: 'Non utilisée', icon: '⏸️' },
-      6: { message: 'Batterie faible', icon: '🪫' },
-      7: { message: 'Déconnectée', icon: '📵' },
-      8: { message: 'URGENCE', icon: '🚨' }
+      2: { message: 'Température anormale', icon: '🌡️' },
+      3: { message: 'Non verrouillée', icon: '🔓' },
+      4: { message: 'Batterie faible', icon: '🪫' },
+      5: { message: 'URGENCE', icon: '🚨' }
     };
     return configs[num] || configs[1];
   };
@@ -213,7 +183,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     padding: 20,
     alignItems: 'center',
-    height: 140, // Hauteur fixe
+    height: 140,
   },
   urgentCard: {
     borderWidth: 2,
@@ -257,25 +227,23 @@ const styles = StyleSheet.create({
 
 // Mapping des numéros d'alertes (pour référence)
 export const ALERT_TYPES = {
-  NORMAL: 1,
-  TEMP_HIGH: 2,
-  TEMP_LOW: 3,
-  UNLOCKED: 4,
-  NOT_USED: 5,
-  BATTERY_LOW: 6,
-  DISCONNECTED: 7,
-  FALL_DETECTED: 8,
+  NORMAL: 1,           // ✅ Tout va bien
+  TEMP_ABNORMAL: 2,    // 🌡️ Température anormale (< 25°C ou > 38°C)
+  UNLOCKED: 3,         // 🔓 Attelle non verrouillée
+  BATTERY_LOW: 4,      // 🪫 Batterie faible (< 15%)
+  EMERGENCY: 5,        // 🚨 Erreur inconnue / Urgence
 };
 
 // Exemples d'utilisation
 /*
-import { AlertCard, AlertCardCompact, AlertCardWithLevel, ALERT_TYPES } from './AlertCard';
+import { AlertInfo, AlertCardCompact, AlertCardWithLevel, ALERT_TYPES } from './AlertInfo';
 
 // Utilisation simple avec numéro
-<AlertCard numero={1} />  // Normal
-<AlertCard numero={2} />  // Température élevée
-<AlertCard numero={4} />  // Non verrouillée
-<AlertCard numero={8} />  // URGENCE
+<AlertInfo numero={1} />  // Normal
+<AlertInfo numero={2} />  // Température anormale
+<AlertInfo numero={3} />  // Non verrouillée
+<AlertInfo numero={4} />  // Batterie faible
+<AlertInfo numero={5} />  // URGENCE
 
 // Version compacte
 <AlertCardCompact numero={1} />
@@ -284,7 +252,9 @@ import { AlertCard, AlertCardCompact, AlertCardWithLevel, ALERT_TYPES } from './
 <AlertCardWithLevel numero={2} />
 
 // Utilisation avec constantes
-<AlertCard numero={ALERT_TYPES.NORMAL} />
-<AlertCard numero={ALERT_TYPES.TEMP_HIGH} />
-<AlertCard numero={ALERT_TYPES.UNLOCKED} />
+<AlertInfo numero={ALERT_TYPES.NORMAL} />
+<AlertInfo numero={ALERT_TYPES.TEMP_ABNORMAL} />
+<AlertInfo numero={ALERT_TYPES.UNLOCKED} />
+<AlertInfo numero={ALERT_TYPES.BATTERY_LOW} />
+<AlertInfo numero={ALERT_TYPES.EMERGENCY} />
 */
